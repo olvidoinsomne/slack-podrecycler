@@ -1,0 +1,9 @@
+slackApiToken: "<BOT_OATH_TOKEN>"
+slackBotId: ""
+slackChannelId: ""
+slackSigningSecret: "<BOT_SIGNING_SECRET>"
+hostUri: ""
+tlsSecretName: ""
+image: ""
+imageTag: latest
+imagePullSecret: ""

@@ -1,0 +1,5 @@
+apiVersion: v2
+name: kme-podrecycler
+fullname: kme-podrecycler
+description: A Helm chart for deploying the pod recycler slackbot.
+version: 0.1.0

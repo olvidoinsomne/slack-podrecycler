@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}-pod-restart-sa
+      containers:
+        - name: {{ .Release.Name }}-master
+          image: {{ .Values.image }}
+          imagePullPolicy: Always
+          command: ["python", "podRestart.py"]
+          env:
+            - name: SLACK_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}
+                  key: SLACK_API_TOKEN
+            - name: SLACK_BOT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}
+                  key: SLACK_BOT_ID
+            - name: SLACK_CHANNEL_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}
+                  key: SLACK_CHANNEL_ID
+            - name: SLACK_SIGNING_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}
+                  key: SLACK_SIGNING_SECRET
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: kmerecycler-scripts
+              mountPath: /scripts
+      imagePullSecrets: 
+          - name: {{ .Values.imagePullSecret }}
+      volumes:
+        - name: kmerecycler-scripts
+          configMap:
+            name: {{ .Release.Name }}
